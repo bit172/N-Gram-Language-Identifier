@@ -1,23 +1,15 @@
 import numpy as np
 import re
-
-LANGUAGES = {
-    "eu": 0,
-    "ca": 1,
-    "gl": 2,
-    "es": 3,
-    "en": 4,
-    "pt": 5
-}
-
-ts_per_lang = [[], [], [], [], [], []]
-frequencies = []
-c_totals = []
+import math
+import pprint
+s_factor = 0.3
 
 
 def categorize(tweets):
+    ts_per_lang = {"eu": [], "ca": [], "gl": [], "es": [], "en": [], "pt": []}
     for t in tweets:
-        ts_per_lang[LANGUAGES[t[0]]].append(clean_tweet(t[1]))
+        ts_per_lang[t[0]].append(clean_tweet(t[1]))
+    return ts_per_lang
 
 
 def clean_tweet(t):
@@ -26,20 +18,22 @@ def clean_tweet(t):
 
 def count_c_frequency(ts):
     bag = {}
-    count = 0
     for t in ts:
         for c in t:
             if c in bag.keys():
                 bag[c] += 1
             else:
-                bag[c] = 1
+                bag[c] = 1 + s_factor
+    return bag
+
+
+def total_c(ts):
+    count = 0
+    for t in ts:
+        for c in t:
             count += 1
-    frequencies.append(bag)
-    c_totals.append(count)
-
-
-def calculate_prob(freq, total):
-    return freq / total
+    count += 26 * s_factor
+    return count
 
 
 if __name__ == '__main__':
@@ -52,7 +46,22 @@ if __name__ == '__main__':
         training_tweet = i.split("\t")
         training_tweets.append([training_tweet[2], training_tweet[3].strip()])
 
-    categorize(training_tweets)
+    frequencies = {}
+    c_totals = {}
+    for k, v in categorize(training_tweets).items():
+        if k in frequencies.keys():
+            frequencies[k].append(count_c_frequency(v))
+        else:
+            frequencies[k] = count_c_frequency(v)
+        c_totals[k] = total_c(v)
 
-    for lang in ts_per_lang:
-        count_c_frequency(lang)
+    cond_prob = {}
+    for lang, frequency in frequencies.items():
+        bag = {}
+        total = c_totals[lang]
+        for c, count in frequency.items():
+            bag[c] = math.log10(count / total)
+        if len(bag) < 26:
+            bag['<NOT-APPEAR>'] = math.log10(s_factor / total)
+        cond_prob[lang] = bag
+    pprint.pprint(cond_prob,  width=1)
