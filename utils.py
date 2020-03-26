@@ -11,6 +11,7 @@ def clean_tweet(t, v):
     if v == 2:
         return "".join([x for x in t if x.isalpha()])
 
+
 def total_c_in_v(v):
     if v == 0:
         return 26
@@ -18,6 +19,7 @@ def total_c_in_v(v):
         return 52
     if v == 2:
         return 116766
+
 
 def categorize(raw_tweets, v):
     tweets = process_tweets(raw_tweets, v)
@@ -57,5 +59,3 @@ def compute_accuracy(v, n, s_factor):
     outputs = read(output_file)
     accuracy = ([i.split()[4] for i in outputs].count("correct") / len(outputs)) * 100
     return f"| v:{v} | n:{n} | s_factor:{s_factor} | accuracy: {accuracy}%"
-
-
