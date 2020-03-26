@@ -2,8 +2,13 @@ import re
 from decimal import Decimal
 
 
-# clean a single tweet
 def clean_tweet(t, v):
+    """
+    clean a single tweet
+    :param t: tweet
+    :param v: vocabulary
+    :return: cleaned tweet
+    """
     if v == 0:
         return re.sub(r"[^A-Za-z]", '', t).lower()
     if v == 1:

@@ -5,9 +5,12 @@ import pprint
 v = n = s_factor = training_file = test_file = None
 
 
-# counts the frequency of each characters in an array of tweet strings
-# returns a dictionary of { character: # times character appears in all tweets }
 def count_c_frequencies(ts):
+    """
+    Counts the frequency of each characters in an array of tweet strings
+    :param ts: list of tweets
+    :return: dictionary of { character: # times character appears in all tweets }
+    """
     bag = {}
     for t in ts:
         for c in t:
@@ -18,8 +21,12 @@ def count_c_frequencies(ts):
     return bag
 
 
-# count the total number of characters found in the tweets per language
 def total_c(categorized_tweets):
+    """
+    Count the total number of characters found in the tweets per language
+    :param categorized_tweets: dictionary of tweets by language
+    :return: dictionary of total number of characters based on language
+    """
     c_totals = {}
     for language, tweets in categorized_tweets.items():
         count = 0
@@ -31,8 +38,13 @@ def total_c(categorized_tweets):
     return c_totals
 
 
-# count the frequency for each character per language
+#
 def c_frequencies_in_langs(categorized_tweets):
+    """
+    Count the frequency for each character per language
+    :param categorized_tweets: dictionary of tweets by language
+    :return: dictionary of character frequencies with language key
+    """
     frequencies = {}
     for language, tweets in categorized_tweets.items():
         if language in frequencies.keys():
@@ -42,8 +54,14 @@ def c_frequencies_in_langs(categorized_tweets):
     return frequencies
 
 
-# find conditional probabilities for each c per lang
+#
 def compute_cond_probs(frequencies, total_c_counts):
+    """
+    Find conditional probabilities for each c per lang
+    :param frequencies: dictionary of character frequencies with language key
+    :param total_c_counts: dictionary of total number of characters based on language
+    :return: dictionary of conditional probabilities with language key
+    """
     cond_probs = {}
     for lang, frequency in frequencies.items():
         bag = {}
@@ -57,9 +75,14 @@ def compute_cond_probs(frequencies, total_c_counts):
     return cond_probs
 
 
-# find most probable language for each tweet
-# store most prob lang and required elements in an output file
 def output_most_prob_lang_and_required_els(test_tweets, cond_probs):
+    """
+    Find most probable language for each tweet and
+    store most prob lang and required elements in an output file
+    :param test_tweets: list of testing tweets
+    :param cond_probs: dictionary of conditional probabilities with language key
+    :return: None
+    """
     f = open(output_file_name(v, n, s_factor), "w")
     for test_tweet in test_tweets:
         probabilities = {}  # stores the probability of all languages for each tweet
@@ -78,8 +101,8 @@ def output_most_prob_lang_and_required_els(test_tweets, cond_probs):
 
 
 def execute(input_v, input_n, input_s, input_train, input_test):
-    global v,  n, s_factor, training_file, test_file
-    (v,  n, s_factor, training_file, test_file) = (input_v, input_n, input_s, input_train, input_test)
+    global v, n, s_factor, training_file, test_file
+    (v, n, s_factor, training_file, test_file) = (input_v, input_n, input_s, input_train, input_test)
 
     raw_training_tweets = read(training_file)
     categorize_tweets = categorize(raw_training_tweets, v)
