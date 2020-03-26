@@ -2,11 +2,12 @@ import re
 from decimal import Decimal
 
 
+# clean a single tweet
 def clean_tweet(t, v):
     if v == 0:
         return re.sub(r"[^A-Za-z]", '', t).lower()
     if v == 1:
-        return
+        return re.sub(r"[^A-Za-z]", '', t)
     if v == 2:
         return
 
