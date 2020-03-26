@@ -1,10 +1,8 @@
 from utils import *
 import math
 import pprint
-from decimal import Decimal
 
-inputs = read('input.txt')[0].split(" ")
-(v, n, s_factor, training_file, test_file) = (int(inputs[0]), int(inputs[1]), float(inputs[2]), inputs[3], inputs[4])
+v = n = s_factor = training_file = test_file = None
 
 
 # counts the frequency of each characters in an array of tweet strings
@@ -28,7 +26,7 @@ def total_c(categorized_tweets):
         for tweet in tweets:
             for character in tweet:
                 count += 1
-        count += 26 * s_factor
+        count += total_c_in_v(v) * s_factor
         c_totals[language] = count
     return c_totals
 
@@ -52,9 +50,10 @@ def compute_cond_probs(frequencies, total_c_counts):
         total = total_c_counts[lang]
         for c, count in frequency.items():
             bag[c] = math.log10(count / total)
-        if len(bag) < 26:  # if we don't have all 26 letters
+        if len(bag) < total_c_in_v(v):  # if we don't have all characters in the bag
             bag['<NOT-APPEAR>'] = math.log10(s_factor / total)
         cond_probs[lang] = bag
+
     return cond_probs
 
 
@@ -70,12 +69,18 @@ def output_most_prob_lang_and_required_els(test_tweets, cond_probs):
             # compute the probability of each language by adding the probabilities of
             # each characters that appear in the tweet
             for c in tweet:
-                probabilities[language] += c_probs[c]
+                if c in c_probs.keys():
+                    probabilities[language] += c_probs[c]
+                else:
+                    probabilities[language] += c_probs['<NOT-APPEAR>']
         f.write(generate_output_str(probabilities, test_tweet))
     f.close()
 
 
-def execute():
+def execute(input_v, input_n, input_s, input_train, input_test):
+    global v,  n, s_factor, training_file, test_file
+    (v,  n, s_factor, training_file, test_file) = (input_v, input_n, input_s, input_train, input_test)
+
     raw_training_tweets = read(training_file)
     categorize_tweets = categorize(raw_training_tweets, v)
 
@@ -90,6 +95,3 @@ def execute():
 
     output_most_prob_lang_and_required_els(test_tweets, cond_probs)
     print(compute_accuracy(v, n, s_factor))
-
-
-execute()

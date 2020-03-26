@@ -1,9 +1,20 @@
 import numpy as np
 import pandas as pd
+import pprint
 from utils import *
 
-inputs = read('input.txt')[0].split(" ")
-(v, n, s_factor, training_file, test_file) = (int(inputs[0]), int(inputs[1]), float(inputs[2]), inputs[3], inputs[4])
+v = n = s_factor = training_file = test_file = None
 
-raw_training_tweets = read(training_file)
-print(process_tweets(raw_training_tweets, v))
+
+def execute(input_v, input_n, input_s, input_train, input_test):
+    global v, n, s_factor, training_file, test_file
+    (v, n, s_factor, training_file, test_file) = (input_v, input_n, input_s, input_train, input_test)
+
+    raw_training_tweets = read(training_file)
+    training_tweets = categorize(raw_training_tweets, v)
+
+    unique_characters = {}
+    # concatenate all strings in a given language and find the unique characters by using join
+    for language, tweets in training_tweets.items():
+        unique_characters[language] = (list(set(''.join(tweets))))
+        unique_characters[language].sort()
