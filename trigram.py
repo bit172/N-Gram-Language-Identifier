@@ -32,7 +32,7 @@ def execute(input_v, input_n, input_s, input_train, input_test):
     raw_training_tweets = read(training_file)
     training_tweets = categorize(raw_training_tweets, v)
 
-    unique_characters = unique_c_arr(training_tweets, v)
+    unique_characters = unique_c(training_tweets, v)
 
     data_frames = create_data_frames(unique_characters, s_factor)
 

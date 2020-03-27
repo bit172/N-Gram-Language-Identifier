@@ -1,6 +1,7 @@
 from utils import *
 import unigram
 import bigram
+import bigram_v2
 import trigram
 from time import time
 
@@ -10,7 +11,7 @@ t1 = time()
 if n == 1:
     unigram.execute(v, n, s_factor, training_file, test_file)
 if n == 2:
-    bigram.execute(v, n, s_factor, training_file, test_file)
+    bigram_v2.execute(v, n, s_factor, training_file, test_file)
 if n == 3:
     trigram.execute(v, n, s_factor, training_file, test_file)
 t2 = time()

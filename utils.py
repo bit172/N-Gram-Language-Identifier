@@ -66,7 +66,7 @@ def compute_accuracy(v, n, s_factor):
     return f"| v:{v} | n:{n} | s_factor:{s_factor} | accuracy: {accuracy}%"
 
 
-def unique_c_arr(training_tweets, v):
+def unique_c(training_tweets, v):
     unique_characters = {}
     # concatenate all strings in a given language and find the unique characters by using join
     for language, tweets in training_tweets.items():
@@ -76,3 +76,24 @@ def unique_c_arr(training_tweets, v):
         if len(characters) < total_c_in_v(v):
             characters.add('<NOT-APPEAR>')
     return unique_characters
+
+
+def unique_c_v2(training_tweets, v):
+    unique_characters = {}
+    # concatenate all strings in a given language and find the unique characters by using join
+    for language, tweets in training_tweets.items():
+        unique_characters[language] = list(set(''.join(tweets)))
+        unique_characters[language].sort()
+    for lang, characters in unique_characters.items():
+        if len(characters) < total_c_in_v(v):
+            characters.append('<NOT-APPEAR>')
+    unique = {}
+    for lan, cha in unique_characters.items():
+        counter = 0
+        unique[lan] = {}
+        for c in cha:
+            unique[lan][c] = counter
+            counter += 1
+
+    return unique
+
