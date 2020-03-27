@@ -70,8 +70,9 @@ def unique_c_arr(training_tweets, v):
     unique_characters = {}
     # concatenate all strings in a given language and find the unique characters by using join
     for language, tweets in training_tweets.items():
-        unique_characters[language] = list(set(''.join(tweets)))
-        unique_characters[language].sort()
+        unique_characters[language] = set(''.join(tweets))
+        # unique_characters[language].sort()
     for lang, characters in unique_characters.items():
         if len(characters) < total_c_in_v(v):
-            characters.append('<NOT-APPEAR>')
+            characters.add('<NOT-APPEAR>')
+    return unique_characters
