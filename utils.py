@@ -64,3 +64,14 @@ def compute_accuracy(v, n, s_factor):
     outputs = read(output_file)
     accuracy = ([i.split()[4] for i in outputs].count("correct") / len(outputs)) * 100
     return f"| v:{v} | n:{n} | s_factor:{s_factor} | accuracy: {accuracy}%"
+
+
+def unique_c_arr(training_tweets, v):
+    unique_characters = {}
+    # concatenate all strings in a given language and find the unique characters by using join
+    for language, tweets in training_tweets.items():
+        unique_characters[language] = list(set(''.join(tweets)))
+        unique_characters[language].sort()
+    for lang, characters in unique_characters.items():
+        if len(characters) < total_c_in_v(v):
+            characters.append('<NOT-APPEAR>')
