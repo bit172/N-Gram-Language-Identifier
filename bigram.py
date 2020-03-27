@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import pprint
+import io
 from utils import *
 import math
 
@@ -8,7 +9,7 @@ v = n = s_factor = training_file = test_file = None
 
 
 def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_frames):
-    f = open(output_file_name(v, n, s_factor), "w")
+    f = io.open(output_file_name(v, n, s_factor), "w", "utf-8")
     for test_tweet in test_tweets:
         probabilities = {}  # stores the probability of all languages for each tweet
         tweet = test_tweet[2]
@@ -54,6 +55,9 @@ def execute(input_v, input_n, input_s, input_train, input_test):
                 if c2 not in unique_characters[lang]:
                     c2 = '<NOT-APPEAR>'
                 data_frames[lang][c1][c2] += 1
+
+    for lang, frame in data_frames.items():
+        frame.to_csv(f'./cond_prob_tables/freq_bigram_{lang}.csv', index=True, encoding='utf-8')
 
     cond_prob_frames = create_data_frames(unique_characters, 0)
 

@@ -56,7 +56,7 @@ def generate_output_str(probabilities, test_tweet):
 
 
 def output_file_name(v, n, s_factor):
-    return f"./results/trace_{v}_{n}_{s_factor}"
+    return f"./results/trace_{v}_{n}_{s_factor}.txt"
 
 
 def compute_accuracy(v, n, s_factor):
