@@ -16,4 +16,4 @@ if n == 3:
     trigram.execute(v, n, s_factor, training_file, test_file)
 t2 = time()
 
-print(t2-t1)
+print(f"execution time: {t2-t1}s")
