@@ -4,6 +4,7 @@
 # User Preferences
 .idea/COMP472-Project2.iml
 .idea/misc.xml
+cond_prob_tables
 
 #PyCache
 **/__pycache__
