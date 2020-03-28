@@ -11,22 +11,24 @@ def clean_tweet(t, v):
     """
     if v == 0:
         return re.sub(r"[^A-Za-z]", '', t).lower()
-    elif v == 1:
+    if v == 1:
         return re.sub(r"[^A-Za-z]", '', t)
-    elif v == 2:
+    if v == 2:
         return "".join([x for x in t if x.isalpha()])
-    else:
-       str = "".join(filter(lambda x: x[0] != '@' and x[:4] != 'http', t.split()))
-       return "".join([x for x in str if x.isalpha()])
+    if v == 3:
+       str = " ".join(filter(lambda x: x[0] != '@' and x[:4] != 'http', t.split()))
+       return "".join([x for x in str if x.isalpha() or x == ' '])
 
 
 def total_c_in_v(v):
     if v == 0:
         return 26
-    elif v == 1:
+    if v == 1:
         return 52
-    else:
+    if v == 2:
         return 116766
+    if v == 3:
+        return 116767
 
 
 def categorize(raw_tweets, v):
