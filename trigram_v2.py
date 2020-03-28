@@ -2,8 +2,33 @@ import numpy as np
 import pandas as pd
 from utils import *
 import math
+import io
 
 v = n = s_factor = training_file = test_file = None
+
+
+def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_3d, total_tweet_num,
+                                           training_tweets):
+    f = io.open(output_file_name(v, n, s_factor), "w", encoding="utf-8")
+    for test_tweet in test_tweets:
+        probabilities = {}  # stores the probability of all languages for each tweet
+        tweet = test_tweet[2]
+        for lang, c_prob in cond_prob_3d.items():
+            probabilities[lang] = math.log10(len(training_tweets[lang]) / total_tweet_num)
+            for c in split_tweet_into_trigrams(tweet):
+                c1, c2, c3 = c
+                if c1 not in unique_characters[lang]:
+                    c1 = '<NOT-APPEAR>'
+                if c2 not in unique_characters[lang]:
+                    c2 = '<NOT-APPEAR>'
+                if c3 not in unique_characters[lang]:
+                    c3 = '<NOT-APPEAR>'
+                c1_idx = unique_characters[lang][c1]
+                c2_idx = unique_characters[lang][c2]
+                c3_idx = unique_characters[lang][c3]
+                probabilities[lang] += c_prob[c1_idx][c2_idx][c3_idx]
+        f.write(generate_output_str(probabilities, test_tweet))
+    f.close()
 
 
 def create_3d_arrays(unique_characters, initial_val):
@@ -56,6 +81,9 @@ def execute(input_v, input_n, input_s, input_train, input_test):
                 for c3_idx in unique_character.values():
                     cond_prob_3d_arrs[lang][c1_idx][c2_idx, c3_idx] = \
                         math.log10(frequency_counts[lang][c1_idx, c2_idx, c3_idx] / sums)
-    print(cond_prob_3d_arrs["en"])
-    # data_frames['en'].loc[idx['x', 'x'], 'x'] = 3
-    # print(data_frames['en']['x']['x']['x'])
+
+    raw_test_tweets = read(test_file)
+    test_tweets = process_tweets(raw_test_tweets, v)
+    output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_3d_arrs, len(raw_training_tweets),
+                                           training_tweets)
+    print(compute_accuracy(v, n, s_factor))
