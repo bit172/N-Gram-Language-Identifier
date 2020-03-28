@@ -75,10 +75,12 @@ def compute_cond_probs(frequencies, total_c_counts):
     return cond_probs
 
 
-def output_most_prob_lang_and_required_els(test_tweets, cond_probs):
+def output_most_prob_lang_and_required_els(test_tweets, cond_probs, total_tweet_num, categorized_tweets):
     """
     Find most probable language for each tweet and
     store most prob lang and required elements in an output file
+    :param categorized_tweets:
+    :param total_tweet_num:
     :param test_tweets: list of testing tweets
     :param cond_probs: dictionary of conditional probabilities with language key
     :return: None
@@ -88,7 +90,7 @@ def output_most_prob_lang_and_required_els(test_tweets, cond_probs):
         probabilities = {}  # stores the probability of all languages for each tweet
         tweet = test_tweet[2]
         for language, c_probs in cond_probs.items():
-            probabilities[language] = 0
+            probabilities[language] = math.log10(len(categorized_tweets[language]) / total_tweet_num)
             # compute the probability of each language by adding the probabilities of
             # each characters that appear in the tweet
             for c in tweet:
@@ -116,5 +118,5 @@ def execute(input_v, input_n, input_s, input_train, input_test):
     raw_test_tweets = read(test_file)
     test_tweets = process_tweets(raw_test_tweets, v)
 
-    output_most_prob_lang_and_required_els(test_tweets, cond_probs)
+    output_most_prob_lang_and_required_els(test_tweets, cond_probs, len(raw_training_tweets), categorize_tweets)
     print(compute_accuracy(v, n, s_factor))

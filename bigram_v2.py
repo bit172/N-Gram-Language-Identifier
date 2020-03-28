@@ -7,13 +7,14 @@ import math
 v = n = s_factor = training_file = test_file = None
 
 
-def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_2d):
+def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_2d, total_tweet_num,
+                                           training_tweets):
     f = io.open(output_file_name(v, n, s_factor), "w")
     for test_tweet in test_tweets:
         probabilities = {}  # stores the probability of all languages for each tweet
         tweet = test_tweet[2]
         for lang, c_prob in cond_prob_2d.items():
-            probabilities[lang] = 0
+            probabilities[lang] = math.log10(len(training_tweets[lang]) / total_tweet_num)
             for i in range(len(tweet) - 1):
                 c1 = tweet[i]
                 c2 = tweet[i + 1]
@@ -26,8 +27,6 @@ def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_
                 probabilities[lang] += c_prob[c1_idx][c2_idx]
         f.write(generate_output_str(probabilities, test_tweet))
     f.close()
-
-
 
 
 def create_2d_arrays(unique_characters, initial_val):
@@ -78,11 +77,10 @@ def execute(input_v, input_n, input_s, input_train, input_test):
     cond_prob_2d_arrs = create_2d_arrays(unique_characters, 0)
 
     for lang, unique_character in unique_characters.items():
-        sums = np.sum(frequency_counts[lang], axis=1)
         for c1_idx in unique_character.values():
             for c2_idx in unique_character.values():
                 cond_prob_2d_arrs[lang][c1_idx][c2_idx] = math.log10(
-                    frequency_counts[lang][c1_idx][c2_idx] / sums[c1_idx])
+                    frequency_counts[lang][c1_idx][c2_idx] / np.sum(frequency_counts[lang][c1_idx]))
 
     # cond_prob_frames = create_data_frames(unique_characters, cond_prob_2d_arrs)
     # for lang, frame in cond_prob_frames.items():
@@ -90,5 +88,6 @@ def execute(input_v, input_n, input_s, input_train, input_test):
 
     raw_test_tweets = read(test_file)
     test_tweets = process_tweets(raw_test_tweets, v)
-    output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_2d_arrs)
+    output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_2d_arrs, len(raw_training_tweets),
+                                           training_tweets)
     print(compute_accuracy(v, n, s_factor))
