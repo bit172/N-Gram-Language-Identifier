@@ -11,18 +11,21 @@ def clean_tweet(t, v):
     """
     if v == 0:
         return re.sub(r"[^A-Za-z]", '', t).lower()
-    if v == 1:
+    elif v == 1:
         return re.sub(r"[^A-Za-z]", '', t)
-    if v == 2:
+    elif v == 2:
         return "".join([x for x in t if x.isalpha()])
+    else:
+       str = "".join(filter(lambda x: x[0] != '@' and x[:4] != 'http', t.split()))
+       return "".join([x for x in str if x.isalpha()])
 
 
 def total_c_in_v(v):
     if v == 0:
         return 26
-    if v == 1:
+    elif v == 1:
         return 52
-    if v == 2:
+    else:
         return 116766
 
 
@@ -96,4 +99,3 @@ def unique_c_v2(training_tweets, v):
             counter += 1
 
     return unique
-

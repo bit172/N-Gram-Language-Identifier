@@ -9,7 +9,7 @@ v = n = s_factor = training_file = test_file = None
 
 def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_3d, total_tweet_num,
                                            training_tweets):
-    f = io.open(output_file_name(v, n, s_factor), "w", encoding="utf-8")
+    f = io.open(output_file_name(v, n, s_factor), "w")
     for test_tweet in test_tweets:
         probabilities = {}  # stores the probability of all languages for each tweet
         tweet = test_tweet[2]
