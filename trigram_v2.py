@@ -6,8 +6,16 @@ import io
 v = n = s_factor = training_file = test_file = None
 
 
-def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_3d, total_tweet_num,
-                                           training_tweets):
+def evaluate_test_set(test_tweets, unique_characters, cond_prob_3d, total_tweet_num, training_tweets):
+    """
+    Evaluates the test set based on with a trigram model
+    :param test_tweets: cleaned test tweets
+    :param unique_characters: dictionary of dictionary: language:character:index
+    :param cond_prob_3d: trigram probability matrix
+    :param total_tweet_num: number of tweets in the training set
+    :param training_tweets: dictionary where the key is the language and the value is a set of unique characters
+    :return: None
+    """
     f = io.open(output_file_name(v, n, s_factor), "w")
     for test_tweet in test_tweets:
         probabilities = {}  # stores the probability of all languages for each tweet
@@ -31,6 +39,12 @@ def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_
 
 
 def create_3d_arrays(unique_characters, initial_val):
+    """
+    Creates an n x n x n matrix where n is the vocabulary size
+    :param unique_characters: set of characters in a vocabulary
+    :param initial_val: initial value of all cells
+    :return: n x n x n matrix
+    """
     three_d_arrs = {}
     for lang, chars in unique_characters.items():
         size = len(chars)
@@ -39,6 +53,11 @@ def create_3d_arrays(unique_characters, initial_val):
 
 
 def split_tweet_into_trigrams(tweet):
+    """
+    Generator that splits a tweet into trigrams
+    :param tweet: tweet
+    :return: tuple of trigrams
+    """
     for i in range(len(tweet) - 2):
         c1 = tweet[i]
         c2 = tweet[i + 1]
@@ -47,6 +66,15 @@ def split_tweet_into_trigrams(tweet):
 
 
 def execute(input_v, input_n, input_s, input_train, input_test):
+    """
+    Creates the model with a training set and evaluates it with a test set
+    :param input_v: vocabulary
+    :param input_n: n-gram to use
+    :param input_s: smoothing factor
+    :param input_train: training set file name
+    :param input_test: test set file name
+    :return: None
+    """
     global v, n, s_factor, training_file, test_file
     (v, n, s_factor, training_file, test_file) = (input_v, input_n, input_s, input_train, input_test)
 
@@ -78,11 +106,10 @@ def execute(input_v, input_n, input_s, input_train, input_test):
             for c2_idx in unique_character.values():
                 sums = np.sum(frequency_counts[lang][c1_idx, c2_idx])
                 for c3_idx in unique_character.values():
-                    cond_prob_3d_arrs[lang][c1_idx][c2_idx, c3_idx] = \
+                    cond_prob_3d_arrs[lang][c1_idx, c2_idx, c3_idx] = \
                         math.log10(frequency_counts[lang][c1_idx, c2_idx, c3_idx] / sums)
 
     raw_test_tweets = read(test_file)
     test_tweets = process_tweets(raw_test_tweets, v)
-    output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_3d_arrs, len(raw_training_tweets),
-                                           training_tweets)
+    evaluate_test_set(test_tweets, unique_characters, cond_prob_3d_arrs, len(raw_training_tweets), training_tweets)
     print(compute_accuracy(v, n, s_factor))

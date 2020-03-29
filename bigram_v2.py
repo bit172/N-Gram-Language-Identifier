@@ -7,8 +7,16 @@ import io
 v = n = s_factor = training_file = test_file = None
 
 
-def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_2d, total_tweet_num,
-                                           training_tweets):
+def evaluate_test_set(test_tweets, unique_characters, cond_prob_2d, total_tweet_num, training_tweets):
+    """
+    Evaluates the test set based on with a bigram model
+    :param test_tweets: cleaned test tweets
+    :param unique_characters: dictionary of dictionary: language:character:index
+    :param cond_prob_2d: bigram probability matrix
+    :param total_tweet_num: number of tweets in the training set
+    :param training_tweets: dictionary where the key is the language and the value is a set of unique characters
+    :return: None
+    """
     f = io.open(output_file_name(v, n, s_factor), "w")
     for test_tweet in test_tweets:
         probabilities = {}  # stores the probability of all languages for each tweet
@@ -30,6 +38,12 @@ def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_
 
 
 def create_2d_arrays(unique_characters, initial_val):
+    """
+    Creates an n x n matrix where n is the vocabulary size
+    :param unique_characters: set of characters in a vocabulary
+    :param initial_val: initial value of all cells
+    :return: n x n matrix
+    """
     two_d_arrs = {}
     for lang, chars in unique_characters.items():
         size = len(chars)
@@ -38,6 +52,12 @@ def create_2d_arrays(unique_characters, initial_val):
 
 
 def create_data_frames(unique_characters, initial_value):
+    """
+    Creates a n x n pandas DataFrame where n is the vocabulary size
+    :param unique_characters: set of unique characters in a vocabulary
+    :param initial_value: initial value of all cells
+    :return: n x n pandas DataFrame
+    """
     data_frames = {}
     for lang, characters in unique_characters.items():
         data_frames[lang] = pd.DataFrame(data=initial_value[lang], columns=characters.keys(), index=characters.keys(),
@@ -46,6 +66,15 @@ def create_data_frames(unique_characters, initial_value):
 
 
 def execute(input_v, input_n, input_s, input_train, input_test):
+    """
+    Creates the model with a training set and evaluates it with a test set
+    :param input_v: vocabulary
+    :param input_n: n-gram to use
+    :param input_s: smoothing factor
+    :param input_train: training set file name
+    :param input_test: test set file name
+    :return: None
+    """
     global v, n, s_factor, training_file, test_file
     (v, n, s_factor, training_file, test_file) = (input_v, input_n, input_s, input_train, input_test)
 
@@ -84,6 +113,5 @@ def execute(input_v, input_n, input_s, input_train, input_test):
 
     raw_test_tweets = read(test_file)
     test_tweets = process_tweets(raw_test_tweets, v)
-    output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_prob_2d_arrs, len(raw_training_tweets),
-                                           training_tweets)
+    evaluate_test_set(test_tweets, unique_characters, cond_prob_2d_arrs, len(raw_training_tweets), training_tweets)
     print(compute_accuracy(v, n, s_factor))

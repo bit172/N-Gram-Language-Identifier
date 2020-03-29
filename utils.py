@@ -15,7 +15,6 @@ character_set_byom = {'ü', 'q', 'z', 'h', 'j', 'u', 'c', 'a', 'e', 'ç', 'f', '
 def clean_tweet(t, v):
     """
     Cleans a tweet based on the vocabulary requirements
-
     :param t: tweet
     :param v: vocabulary
     :return: cleaned tweet
@@ -38,7 +37,7 @@ def clean_tweet_byom(t):
         3. Removing @usernames and #hashtags
         4. Removing characters not part of our byom characters
         5. Converting all whitespaces to a single whitespace
-        6. Replacing characters that repeat more than 2 times to a single character
+        6. Replacing characters that repeat more than 3 times to a 2 characters
         7. Adding delimiters to the start/end of the tweet
     :param t: tweet
     :return: cleaned byom tweet
@@ -48,7 +47,7 @@ def clean_tweet_byom(t):
     t = " ".join(filter(lambda x: x[0] != '@' and x[0] != '#', t.split()))
     t = "".join([x for x in t if x in character_set_byom or x == ' '])
     t = re.sub(r"\s\s+", ' ', t)
-    t = re.sub(r'(.)\1{2,}', r'\1', t)
+    t = re.sub(r'(.)\1{3,}', r'\1\1', t)
     if t[-1] is " ":
         t = t[:-1]  # Remove the space at the end if there is one
     t = '*' + t + '*'
@@ -59,7 +58,7 @@ def total_c_in_isalpha():
     """
     Gives the total number of unicode characters accepted by isalpha()
     Taken from FAQ
-    :return:
+    :return: total number of accepted characters
     """
     count = 0
     # unicode = 17 planes of 2**16 symbols
@@ -155,7 +154,7 @@ def compute_accuracy(v, n, s_factor):
     :param v: vocabulary used
     :param n: n-gram model used
     :param s_factor: smoothing used
-    :return:
+    :return: string of used parameters and accuracy
     """
     output_file = output_file_name(v, n, s_factor)
     outputs = read(output_file)
@@ -167,8 +166,8 @@ def unique_c(training_tweets, v):
     """
     Finds all unique characters in a training set based on vocabulary.
     :param training_tweets: dictionary of training tweets
-    :param v:
-    :return:
+    :param v: vocabulary
+    :return: dictionary where the key is the language and the value is a set of unique characters
     """
     unique_characters = {}
     # concatenate all strings in a given language and find the unique characters by using join
@@ -183,10 +182,10 @@ def unique_c(training_tweets, v):
 
 def unique_c_v2(training_tweets, v):
     """
-
-    :param training_tweets:
-    :param v:
-    :return:
+    Finds all indexes of unique characters in a training set based on vocabulary.
+    :param training_tweets: dictionary of training tweets
+    :param v: vocabulary
+    :return: dictionary of dictionary: language:character:index
     """
     unique_characters = {}
     # concatenate all strings in a given language and find the unique characters by using join
