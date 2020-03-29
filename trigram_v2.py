@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from utils import *
 import math
 import io
@@ -71,7 +70,7 @@ def execute(input_v, input_n, input_s, input_train, input_test):
                 c1_idx = unique_characters[lang][c1]
                 c2_idx = unique_characters[lang][c2]
                 c3_idx = unique_characters[lang][c3]
-                frequency_counts[lang][c1_idx][c2_idx][c3_idx] += 1
+                frequency_counts[lang][c1_idx, c2_idx, c3_idx] += 1
 
     cond_prob_3d_arrs = create_3d_arrays(unique_characters, 0)
     for lang, unique_character in unique_characters.items():

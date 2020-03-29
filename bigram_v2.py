@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-import io
 from utils import *
 import math
+import io
 
 v = n = s_factor = training_file = test_file = None
 
@@ -24,7 +24,7 @@ def output_most_prob_lang_and_required_els(test_tweets, unique_characters, cond_
                     c2 = '<NOT-APPEAR>'
                 c1_idx = unique_characters[lang][c1]
                 c2_idx = unique_characters[lang][c2]
-                probabilities[lang] += c_prob[c1_idx][c2_idx]
+                probabilities[lang] += c_prob[c1_idx, c2_idx]
         f.write(generate_output_str(probabilities, test_tweet))
     f.close()
 
@@ -67,7 +67,7 @@ def execute(input_v, input_n, input_s, input_train, input_test):
                     c2 = '<NOT-APPEAR>'
                 c1_idx = unique_characters[lang][c1]
                 c2_idx = unique_characters[lang][c2]
-                frequency_counts[lang][c1_idx][c2_idx] += 1
+                frequency_counts[lang][c1_idx, c2_idx] += 1
 
     # frequency_frames = create_data_frames(unique_characters, frequency_counts)
     #
@@ -79,12 +79,8 @@ def execute(input_v, input_n, input_s, input_train, input_test):
     for lang, unique_character in unique_characters.items():
         for c1_idx in unique_character.values():
             for c2_idx in unique_character.values():
-                cond_prob_2d_arrs[lang][c1_idx][c2_idx] = math.log10(
-                    frequency_counts[lang][c1_idx][c2_idx] / np.sum(frequency_counts[lang][c1_idx]))
-
-    # cond_prob_frames = create_data_frames(unique_characters, cond_prob_2d_arrs)
-    # for lang, frame in cond_prob_frames.items():
-    #     frame.to_csv(f'./cond_prob_tables/bigram_{lang}.csv', index=True, encoding='utf-8')
+                cond_prob_2d_arrs[lang][c1_idx, c2_idx] = math.log10(
+                    frequency_counts[lang][c1_idx, c2_idx] / np.sum(frequency_counts[lang][c1_idx]))
 
     raw_test_tweets = read(test_file)
     test_tweets = process_tweets(raw_test_tweets, v)

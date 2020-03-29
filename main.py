@@ -1,10 +1,7 @@
 from utils import *
 import unigram
-import bigram
 import bigram_v2
-import trigram
 import trigram_v2
-import byom
 from time import time
 
 inputs = read('input.txt')[0].split(" ")
@@ -12,11 +9,10 @@ inputs = read('input.txt')[0].split(" ")
 t1 = time()
 if n == 1:
     unigram.execute(v, n, s_factor, training_file, test_file)
-if n == 2:
+elif n == 2:
     bigram_v2.execute(v, n, s_factor, training_file, test_file)
-if n == 3:
+elif n == 3:
     trigram_v2.execute(v, n, s_factor, training_file, test_file)
-# byom.execute(v, n, s_factor, training_file, test_file)
 t2 = time()
 
 print(f"execution time: {t2-t1}s")
