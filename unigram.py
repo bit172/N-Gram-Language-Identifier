@@ -38,7 +38,6 @@ def total_c(categorized_tweets):
     return c_totals
 
 
-#
 def c_frequencies_in_langs(categorized_tweets):
     """
     Count the frequency for each character per language
@@ -54,7 +53,35 @@ def c_frequencies_in_langs(categorized_tweets):
     return frequencies
 
 
-#
+def clean_tweet_unigram(t, v):
+    """
+    Cleans a tweet based on the vocabulary requirements for unigram model
+    :param t: tweet
+    :param v: vocabulary
+    :return: cleaned tweet
+    """
+    if v == 0:
+        return re.sub(r"[^A-Za-z]", '', t).lower()
+    if v == 1:
+        return re.sub(r"[^A-Za-z]", '', t)
+    if v == 2:
+        return "".join([x for x in t if x.isalpha()])
+
+
+def process_tweets_unigram(raw_tweets, v):
+    """
+    Removes tabs from raw_tweets and cleans a tweet base on vocabulary
+    :param raw_tweets: raw training tweets
+    :param v: vocabulary
+    :return: list of of tuples: (id, language, cleaned tweet)
+    """
+    tweets = []
+    for i in raw_tweets:
+        tweet = i.split("\t")  # separates the string by tab and put into a array
+        tweets.append([tweet[0], tweet[2], clean_tweet_unigram(tweet[3].strip(), v)])  # (id, language, tweet)
+    return tweets
+
+
 def compute_cond_probs(frequencies, total_c_counts):
     """
     Find conditional probabilities for each c per lang
@@ -107,16 +134,17 @@ def execute(input_v, input_n, input_s, input_train, input_test):
     (v, n, s_factor, training_file, test_file) = (input_v, input_n, input_s, input_train, input_test)
 
     raw_training_tweets = read(training_file)
-    categorize_tweets = categorize(raw_training_tweets, v)
+    training_tweets = process_tweets_unigram(raw_training_tweets, v)
+    training_tweets = categorize(training_tweets, v)
 
-    total_c_counts = total_c(categorize_tweets)
-    frequencies = c_frequencies_in_langs(categorize_tweets)
+    total_c_counts = total_c(training_tweets)
+    frequencies = c_frequencies_in_langs(training_tweets)
 
     cond_probs = compute_cond_probs(frequencies, total_c_counts)
     # pprint.pprint(cond_probs, width=1)
 
     raw_test_tweets = read(test_file)
-    test_tweets = process_tweets(raw_test_tweets, v)
+    test_tweets = process_tweets_unigram(raw_test_tweets, v)
 
-    output_most_prob_lang_and_required_els(test_tweets, cond_probs, len(raw_training_tweets), categorize_tweets)
+    output_most_prob_lang_and_required_els(test_tweets, cond_probs, len(raw_training_tweets), training_tweets)
     print(compute_accuracy(v, n, s_factor))

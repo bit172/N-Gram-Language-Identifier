@@ -52,6 +52,32 @@ def create_3d_arrays(unique_characters, initial_val):
     return three_d_arrs
 
 
+def unique_c_byom(training_tweets):
+    """
+    Finds all indexes of unique characters in a training set based on vocabulary.
+    :param training_tweets: dictionary of training tweets
+    :param v: vocabulary
+    :return: dictionary of dictionary: language:character:index
+    """
+    unique_characters = {}
+    # concatenate all strings in a given language and find the unique characters by using join
+    for language, tweets in training_tweets.items():
+        unique_characters[language] = list(set(''.join(tweets)))
+        unique_characters[language].sort()
+    for lang, characters in unique_characters.items():
+        if len(characters) < total_c_in_v(v):
+            characters.append('<NOT-APPEAR>')
+    unique = {}
+    for lan, cha in unique_characters.items():
+        counter = 0
+        unique[lan] = {}
+        for c in cha:
+            unique[lan][c] = counter
+            counter += 1
+
+    return unique
+
+
 def split_tweet_into_trigrams(tweet):
     """
     Generator that splits a tweet into trigrams
@@ -79,9 +105,9 @@ def execute(input_v, input_n, input_s, input_train, input_test):
     (v, n, s_factor, training_file, test_file) = (input_v, input_n, input_s, input_train, input_test)
 
     raw_training_tweets = read(training_file)
-    training_tweets = categorize(raw_training_tweets, v)
-
-    unique_characters = unique_c_v2(training_tweets, v)
+    training_tweets = process_tweets(raw_training_tweets, v)
+    training_tweets = categorize(training_tweets, v)
+    unique_characters = unique_c_byom(training_tweets)
 
     frequency_counts = create_3d_arrays(unique_characters, s_factor)
 

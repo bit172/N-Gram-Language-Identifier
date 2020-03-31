@@ -20,11 +20,11 @@ def clean_tweet(t, v):
     :return: cleaned tweet
     """
     if v == 0:
-        return re.sub(r"[^A-Za-z]", '', t).lower()
+        return re.sub(r"[^A-Za-z]", ' ', t).lower()
     if v == 1:
-        return re.sub(r"[^A-Za-z]", '', t)
+        return re.sub(r"[^A-Za-z]", ' ', t)
     if v == 2:
-        return "".join([x for x in t if x.isalpha()])
+        return "".join([x if x.isalpha() else ' ' for x in t])
     if v == 3:
         return clean_tweet_byom(t)
 
@@ -99,14 +99,13 @@ def process_tweets(raw_tweets, v):
     return tweets
 
 
-def categorize(raw_tweets, v):
+def categorize(tweets, v):
     """
     Categorizes tweets based on a language
-    :param raw_tweets: raw training tweets
+    :param tweets: raw training tweets
     :param v: vocabulary
     :return: dictionary of tweets where the key is the language and value is a list of tweets
     """
-    tweets = process_tweets(raw_tweets, v)
     ts_per_lang = {"eu": [], "ca": [], "gl": [], "es": [], "en": [], "pt": []}
     for t in tweets:
         ts_per_lang[t[1]].append(t[2])
@@ -191,6 +190,7 @@ def unique_c_v2(training_tweets, v):
     # concatenate all strings in a given language and find the unique characters by using join
     for language, tweets in training_tweets.items():
         unique_characters[language] = list(set(''.join(tweets)))
+        unique_characters[language].remove(" ")
         unique_characters[language].sort()
     for lang, characters in unique_characters.items():
         if len(characters) < total_c_in_v(v):
