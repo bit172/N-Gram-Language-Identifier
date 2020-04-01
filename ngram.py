@@ -2,7 +2,7 @@ import abc
 import math
 import re
 import numpy as np
-from OOP.utils import *
+from utils import *
 from decimal import Decimal
 
 
@@ -86,7 +86,7 @@ class NGram(abc.ABC):
           """
         most_prob_lang = max(iter(probabilities.keys()), key=(lambda key: probabilities[key]))
         correctness = "correct" if most_prob_lang == test_tweet[1] else "wrong"
-        return f"{test_tweet[0]}  {most_prob_lang}  {'%.2E' % Decimal(probabilities[most_prob_lang])}  {test_tweet[1]}  {correctness}\n"
+        return f"{test_tweet[0]}  {most_prob_lang}  {'%.2E' % Decimal(probabilities[most_prob_lang])}  {test_tweet[1]}  {correctness}\r"
 
     def process_tweets(self, raw_tweets):
         """
@@ -176,18 +176,17 @@ class NGram(abc.ABC):
             matrices[lang] = np.full(shape, initial_val, dtype=np.float64)
         return matrices
 
-    # TODO: implement this like find_c_indices
-    @abc.abstractmethod
-    def split_tweet_into_ngrams(self):
-        return
+    def split_tweet_into_ngrams(self, tweet, n):
+        for i in range(len(tweet) - (n - 1)):
+            c = [tweet[j] for j in range(i, i + n)]
+            if " " in c:
+                continue
+            yield c
 
     @abc.abstractmethod
     def evaluate_test_set(self, test_tweets, unique_chars, matrix, language_probability):
         return
 
     @abc.abstractmethod
-    def cond_prob_matrix(self, unique_chars):
+    def cond_prob_matrix(self, training_tweets, unique_chars):
         return
-
-
-

@@ -1,5 +1,5 @@
 import io
-from OOP.ngram import NGram
+from ngram import NGram
 import numpy as np
 import math
 
@@ -11,19 +11,16 @@ class Bigram(NGram):
 
         for lang, tweets in training_tweets.items():
             for tweet in tweets:
-                for c in self.split_tweet_into_ngrams(tweet):
-                    if " " in c:
-                        continue
+                for c in self.split_tweet_into_ngrams(tweet, 2):
                     c1_idx, c2_idx = self.find_c_indices(unique_characters[lang], c)
                     frequency_counts[lang][c1_idx, c2_idx] += 1
 
         cond_prob_2d_arrs = self.create_matrices(unique_characters, self.S_FACTOR, 2)
 
-        for lang, unique_character in unique_characters.items():
-            for c1_idx in unique_character.values():
-                for c2_idx in unique_character.values():
-                    cond_prob_2d_arrs[lang][c1_idx, c2_idx] = math.log10(
-                        frequency_counts[lang][c1_idx, c2_idx] / np.sum(frequency_counts[lang][c1_idx]))
+        for lang in unique_characters.keys():
+            for index, val in np.ndenumerate(cond_prob_2d_arrs[lang]):
+                cond_prob_2d_arrs[lang][index] = math.log10(
+                    frequency_counts[lang][index] / np.sum(frequency_counts[lang][index[0]]))
         return cond_prob_2d_arrs
 
     def evaluate_test_set(self, test_tweets, unique_characters, cond_prob_2d, language_probabilities):
@@ -43,22 +40,8 @@ class Bigram(NGram):
             tweet = test_tweet[2]
             for lang, c_prob in cond_prob_2d.items():
                 probabilities[lang] = language_probabilities[lang]
-                for c in self.split_tweet_into_ngrams(tweet):
-                    if " " in c:
-                        continue
+                for c in self.split_tweet_into_ngrams(tweet, 2):
                     c1_idx, c2_idx = self.find_c_indices(unique_characters[lang], c)
                     probabilities[lang] += c_prob[c1_idx, c2_idx]
             f.write(self.generate_output_str(probabilities, test_tweet))
         f.close()
-
-    def split_tweet_into_ngrams(self, tweet):
-        """
-          Generator that splits a tweet into trigrams
-          :param tweet: tweet
-          :return: tuple of trigrams
-          """
-        for i in range(len(tweet) - 1):
-            c1 = tweet[i]
-            c2 = tweet[i + 1]
-            yield c1, c2
-

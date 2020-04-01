@@ -1,4 +1,4 @@
-from OOP.ngram import NGram
+from ngram import NGram
 import re
 import math
 
@@ -19,7 +19,6 @@ class Unigram(NGram):
         if self.V == 2:
             return "".join([x for x in tweet if x.isalpha()])
 
-    # TODO: make this shorter and better
     def total_c(self, categorized_tweets):
         """
         Count the total number of characters found in the tweets per language
@@ -36,7 +35,6 @@ class Unigram(NGram):
             c_totals[language] = count
         return c_totals
 
-    # TODO： make this 1 line if possible
     def count_c_frequencies(self, tweets):
         """
         Counts the frequency of each characters in an array of tweet strings
