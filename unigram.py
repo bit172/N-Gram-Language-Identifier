@@ -9,7 +9,6 @@ class Unigram(NGram):
         """
            Cleans a tweet based on the vocabulary requirements for unigram model
            :param tweet: tweet
-           :param v: vocabulary
            :return: cleaned tweet
            """
         if self.V == 0:
@@ -87,6 +86,11 @@ class Unigram(NGram):
         return cond_probs
 
     def cond_prob_matrix(self, training_tweets, unique_chars):
+        """
+        :param training_tweets: dictionary of training tweets
+        :param unique_chars: None
+        :return: array containing the conditional probabilities of each character
+        """
         total_c_counts = self.total_c(training_tweets)
         frequencies = self.c_frequencies_in_langs(training_tweets)
         return self.compute_cond_probs(frequencies, total_c_counts)
@@ -96,10 +100,9 @@ class Unigram(NGram):
         Find most probable language for each tweet and
         store most prob lang and required elements in an output file
         :param language_probability: a dictionary of the probability of a language in the training tweets
-        :param cond_prob_matrix: dictionary of conditional probabilities with language key
+        :param cond_prob_matrix: dictionary of conditional probabilities mapped to a language key
         :param unique_chars: None
         :param test_tweets: list of testing tweets
-        :return: None
         """
         f = open(self.OUTPUT_FILE_NAME, "w")
         for test_tweet in test_tweets:

@@ -35,6 +35,10 @@ def total_c_in_isalpha():
 
 
 def unique_characters(training_tweets):
+    """
+    :param training_tweets:  dictionary of training tweets
+    :return: dictionary of unique characters with the character as the key and their index as the value
+    """
     unique_chars = {}
     # concatenate all strings in a given language and find the unique characters by using join
     for language, tweets in training_tweets.items():
@@ -66,6 +70,9 @@ class NGram(abc.ABC):
         self.OUTPUT_FILE_NAME = output_file_name
 
     def execute(self):
+        """
+        execute the n-gram model
+        """
         raw_training_tweets = read(self.TRAINING_FILE)
         training_tweets = self.process_tweets(raw_training_tweets)
         training_tweets = categorize(training_tweets)
@@ -80,11 +87,11 @@ class NGram(abc.ABC):
 
     def generate_output_str(self, probabilities, test_tweet):
         """
-          Creates the string for trace files
-          :param probabilities: dictionary of conditional probability matrix for all languages
-          :param test_tweet: tweet from testing set
-          :return: trace file line
-          """
+        Creates the string for trace files
+        :param probabilities: dictionary of conditional probability matrix for all languages
+        :param test_tweet: tweet from testing set
+        :return: trace file line
+        """
         most_prob_lang = max(iter(probabilities.keys()), key=(lambda key: probabilities[key]))
         correctness = "correct" if most_prob_lang == test_tweet[1] else "wrong"
         return f"{test_tweet[0]}  {most_prob_lang}  {'%.2E' % Decimal(probabilities[most_prob_lang])}  {test_tweet[1]}  {correctness}\r"
@@ -119,7 +126,6 @@ class NGram(abc.ABC):
         """
         Finds all indexes of unique characters in a training set based on vocabulary.
         :param training_tweets: dictionary of training tweets
-        :param v: vocabulary
         :return: dictionary of dictionary: language:character:index
         """
         unique_chars = unique_characters(training_tweets)
@@ -138,7 +144,6 @@ class NGram(abc.ABC):
     def total_c_in_v(self):
         """
         Returns the total number of characters for a given vocabulary
-        :param v: vocabulary
         :return: number of characters
         """
         if self.V == 0:
@@ -149,6 +154,11 @@ class NGram(abc.ABC):
             return total_c_in_isalpha()
 
     def find_c_indices(self, unique_chars_in_lang, n_grams):
+        """
+        :param unique_chars_in_lang: unique characters in a specific language
+        :param n_grams: n-gram characters
+        :return: indices of the characters
+        """
         indices = list(n_grams)
         for idx, c in enumerate(indices):
             if c not in unique_chars_in_lang.keys():
@@ -172,6 +182,11 @@ class NGram(abc.ABC):
         return matrices
 
     def split_tweet_into_ngrams(self, tweet, n):
+        """
+        :param tweet: one tweet string
+        :param n: the number of grams
+        :return: list of n grams
+        """
         for i in range(len(tweet) - (n - 1)):
             c = [tweet[j] for j in range(i, i + n)]
             if " " in c:
@@ -180,6 +195,9 @@ class NGram(abc.ABC):
 
     @abc.abstractmethod
     def evaluate_test_set(self, test_tweets, unique_chars, matrix, language_probability):
+        """
+        Evaluate the test set and generate a trace file.
+        """
         return
 
     @abc.abstractmethod
