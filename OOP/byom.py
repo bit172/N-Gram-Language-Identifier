@@ -1,0 +1,41 @@
+from OOP.ngram import NGram
+import re
+"""
+   This set contains all possible unique characters in all the 6 languages
+   as describe in the following wikipedia article:
+   https://en.wikipedia.org/wiki/Wikipedia:Language_recognition_chart
+   """
+CHARACTER_SET = {'ü', 'q', 'z', 'h', 'j', 'u', 'c', 'a', 'e', 'ç', 'f', 'n', 'è', 'ó', 's', 'i', 'd', 'é', 'ï',
+                      'ã', 't', 'à', 'ú', 'p', 'ê', 'l', 'b', 'ò', 'w', 'á', 'k', 'â', 'v', 'ñ', 'r', 'y', 'g', 'õ',
+                      'm', 'í', 'o', 'x', 'ô'}
+
+
+class BYOM(NGram):
+
+    def total_c_in_v(self):
+        return len(CHARACTER_SET) + 2  # accounts for whitespace and * delimiter
+
+    def clean_tweet(self, tweet):
+        """
+            Cleans a tweet by doing the following:
+                1. Converting all characters to lowercase
+                2. Removing http/https links from the tweet
+                3. Removing @usernames and #hashtags
+                4. Removing characters not part of our byom characters
+                5. Converting all whitespaces to a single whitespace
+                6. Replacing characters that repeat more than 3 times to a 2 characters
+                7. Adding delimiters to the start/end of the tweet
+            :param tweet: tweet
+            :return: cleaned byom tweet
+            """
+        tweet = tweet.lower()
+        tweet = re.sub(r"http\S+", "", tweet)
+        tweet = " ".join(filter(lambda x: x[0] != '@' and x[0] != '#', tweet.split()))
+        tweet = "".join([x for x in tweet if x in CHARACTER_SET or x == ' '])
+        tweet = re.sub(r"\s\s+", ' ', tweet)
+        tweet = re.sub(r'(.)\1{3,}', r'\1\1', tweet)
+        if tweet[-1] is " ":
+            tweet = tweet[:-1]  # Remove the space at the end if there is one
+        tweet = '*' + tweet + '*'
+        return tweet
+
