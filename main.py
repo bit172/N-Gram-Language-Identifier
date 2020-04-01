@@ -1,3 +1,4 @@
+from time import time
 from utils import read
 from byom import BYOM
 from unigram import Unigram
@@ -7,7 +8,7 @@ from trigram import Trigram
 inputs = read('input.txt')[0].split(" ")
 V, N, S_FACTOR, TRAINING_FILE, TEST_FILE = (int(inputs[0]), int(inputs[1]), float(inputs[2]), inputs[3], inputs[4])
 OUTPUT_FILE_NAME = f"./results/trace_{V}_{N}_{S_FACTOR}.txt"
-
+t1 = time()
 if V == 3:
     BYOM = BYOM(V, S_FACTOR, TRAINING_FILE, TEST_FILE, OUTPUT_FILE_NAME)
     BYOM.execute()
@@ -20,3 +21,6 @@ elif N == 2:
 elif N == 3:
     TRIGRAM = Trigram(V, S_FACTOR, TRAINING_FILE, TEST_FILE, OUTPUT_FILE_NAME)
     TRIGRAM.execute()
+t2 = time()
+
+print(f"execution time: {t2 - t1}s")

@@ -8,7 +8,7 @@ def create_confusion_matrix(nb_of_languages):
     return np.zeros((nb_of_languages, nb_of_languages), dtype=np.uint16)
 
 
-def evaluate(trace_file):
+def evaluate_model(trace_file):
     lang_idx = {"eu": 0, "ca": 1, "gl": 2, "es": 3, "en": 4, "pt": 5}
     precision_per_lang = np.zeros(6, dtype=np.float64)
     recall_per_lang = np.zeros(6, dtype=np.float64)

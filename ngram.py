@@ -2,6 +2,7 @@ import abc
 import math
 import re
 import numpy as np
+from evaluate_model import evaluate_model
 from utils import *
 from decimal import Decimal
 
@@ -75,7 +76,7 @@ class NGram(abc.ABC):
 
         self.evaluate_test_set(test_tweets, unique_chars, self.cond_prob_matrix(training_tweets, unique_chars),
                                lang_probs(training_tweets, len(raw_training_tweets)))
-        print(self.compute_accuracy())
+        evaluate_model(self.OUTPUT_FILE_NAME)
 
     def generate_output_str(self, probabilities, test_tweet):
         """
@@ -146,12 +147,6 @@ class NGram(abc.ABC):
             return 52
         if self.V == 2:
             return total_c_in_isalpha()
-
-    # TODO: remake this function
-    def compute_accuracy(self):
-        outputs = read(self.OUTPUT_FILE_NAME)
-        accuracy = ([i.split()[4] for i in outputs].count("correct") / len(outputs)) * 100
-        return f"| v:{self.V} | s_factor:{self.S_FACTOR} | accuracy: {accuracy}%"
 
     def find_c_indices(self, unique_chars_in_lang, n_grams):
         indices = list(n_grams)
