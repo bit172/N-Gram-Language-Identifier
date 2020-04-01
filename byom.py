@@ -14,7 +14,11 @@ CHARACTER_SET = {'ü', 'q', 'z', 'h', 'j', 'u', 'c', 'a', 'e', 'ç', 'f', 'n', '
 class BYOM(Trigram):
 
     def total_c_in_v(self):
-        return len(CHARACTER_SET) + 2  # accounts for whitespace and * delimiter
+        """
+        Total unique characters in new character set
+        :return: number of unique characters including whitespace and * delimiter
+        """
+        return len(CHARACTER_SET) + 2
 
     def clean_tweet(self, tweet):
         """
@@ -41,6 +45,13 @@ class BYOM(Trigram):
         return tweet
 
     def split_tweet_into_ngrams(self, tweet, n):
+        """
+        Generator that splits tweets into ngrams of size n without omitting
+        whitespace characters
+        :param tweet: tweet
+        :param n: size of ngram
+        :return: list of ngrams
+        """
         for i in range(len(tweet) - (n - 1)):
             c = [tweet[j] for j in range(i, i + n)]
             yield c

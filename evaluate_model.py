@@ -5,10 +5,21 @@ from utils import *
 
 
 def create_confusion_matrix(nb_of_languages):
+    """
+    Creates a confusion matrix of size n
+    :param nb_of_languages: number of languages
+    :return: n x n matrix
+    """
     return np.zeros((nb_of_languages, nb_of_languages), dtype=np.uint16)
 
 
 def evaluate_model(trace_file):
+    """
+    Evaluates a model by computing accuracy, precision per class, recall per class, F1 measure per class,
+    macro-F1, and weighted-average F1 from a given trace file
+    :param trace_file: trace_file of a model
+    :return:
+    """
     lang_idx = {"eu": 0, "ca": 1, "gl": 2, "es": 3, "en": 4, "pt": 5}
     precision_per_lang = np.zeros(6, dtype=np.float64)
     recall_per_lang = np.zeros(6, dtype=np.float64)
@@ -44,10 +55,22 @@ def evaluate_model(trace_file):
 
 
 def compute_accuracy(confusion_matrix, total):
+    """
+    Computes accuracy from a given confusion matrix and the total number of samples
+    :param confusion_matrix: confusion matrix
+    :param total: number of samples
+    :return: accuracy
+    """
     return np.sum(confusion_matrix.diagonal()) / total
 
 
 def compute_recall(confusion_matrix, idx):
+    """
+    Computes the recall of a given class
+    :param confusion_matrix: confusion matrix
+    :param idx: index of the class
+    :return: recall of class
+    """
     try:
         col_sum = confusion_matrix.T[idx].sum()
         if col_sum == 0:
@@ -58,6 +81,12 @@ def compute_recall(confusion_matrix, idx):
 
 
 def compute_precision(confusion_matrix, idx):
+    """
+    Computes the precision of a given class
+    :param confusion_matrix: confusion matrix
+    :param idx: index of class
+    :return: precision of class
+    """
     try:
         row_sum = confusion_matrix[idx].sum()
         if row_sum == 0:
@@ -68,6 +97,12 @@ def compute_precision(confusion_matrix, idx):
 
 
 def compute_f1_measure(precision, recall):
+    """
+    Computes the f1 measure of a given class
+    :param precision: precision of class
+    :param recall: recall of class
+    :return: f1 measure of class
+    """
     try:
         if recall + precision == 0:
             raise ZeroDivisionError

@@ -168,11 +168,11 @@ class NGram(abc.ABC):
 
     def create_matrices(self, unique_chars, initial_val, dimension):
         """
-        Creates an n x n matrix where n is the vocabulary size
+        Creates an n-dimensional matrix where n is the vocabulary size
         :param dimension: the dimension of the matrix
         :param unique_chars: set of characters in a vocabulary
         :param initial_val: initial value of all cells
-        :return: n x n matrix
+        :return: n-dimensional matrix
         """
         matrices = {}
         for lang, chars in unique_chars.items():
