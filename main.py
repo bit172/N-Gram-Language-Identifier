@@ -1,21 +1,22 @@
-from utils import *
-import unigram
-import bigram
-import trigram
-import byom
-from time import time
+from utils import read
+from byom import BYOM
+from unigram import Unigram
+from bigram import Bigram
+from trigram import Trigram
 
 inputs = read('input.txt')[0].split(" ")
-v, n, s_factor, training_file, test_file = (int(inputs[0]), int(inputs[1]), float(inputs[2]), inputs[3], inputs[4])
-t1 = time()
-if v == 3:
-    byom.execute(v, n, s_factor, training_file, test_file)
-elif n == 1:
-    unigram.execute(v, n, s_factor, training_file, test_file)
-elif n == 2:
-    bigram.execute(v, n, s_factor, training_file, test_file)
-elif n == 3:
-    trigram.execute(v, n, s_factor, training_file, test_file)
-t2 = time()
+V, N, S_FACTOR, TRAINING_FILE, TEST_FILE = (int(inputs[0]), int(inputs[1]), float(inputs[2]), inputs[3], inputs[4])
+OUTPUT_FILE_NAME = f"./results/trace_{V}_{N}_{S_FACTOR}.txt"
 
-print(f"execution time: {t2-t1}s")
+if V == 3:
+    BYOM = BYOM(V, S_FACTOR, TRAINING_FILE, TEST_FILE, OUTPUT_FILE_NAME)
+    BYOM.execute()
+elif N == 1:
+    UNIGRAM = Unigram(V, S_FACTOR, TRAINING_FILE, TEST_FILE, OUTPUT_FILE_NAME)
+    UNIGRAM.execute()
+elif N == 2:
+    BIGRAM = Bigram(V, S_FACTOR, TRAINING_FILE, TEST_FILE, OUTPUT_FILE_NAME)
+    BIGRAM.execute()
+elif N == 3:
+    TRIGRAM = Trigram(V, S_FACTOR, TRAINING_FILE, TEST_FILE, OUTPUT_FILE_NAME)
+    TRIGRAM.execute()
