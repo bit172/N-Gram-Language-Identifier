@@ -43,15 +43,17 @@ def evaluate_model(trace_file):
         f1_per_lang[idx] = compute_f1_measure(precision_per_lang[idx], recall_per_lang[idx])
         w_a_f1 += (confusion_matrix.T[idx].sum() * f1_per_lang[idx]) / size
 
-    macro_f1 = np.average(f1_per_lang)
+    return w_a_f1
+    # macro_f1 = np.average(f1_per_lang)
 
-    f = io.open("./results/eval" + trace_file[15:], "w")
-    f.write(f"{'%.4f' % Decimal(accuracy)}\r")
-    f.write(np.array2string(precision_per_lang, precision=4, separator="  ", floatmode="fixed")[1:-1] + "\r")
-    f.write(np.array2string(recall_per_lang, precision=4, separator="  ", floatmode="fixed")[1:-1] + "\r")
-    f.write(np.array2string(f1_per_lang, precision=4, separator="  ", floatmode="fixed")[1:-1] + "\r")
-    f.write(f"{'%.4f' % Decimal(macro_f1)}  {'%.4f' % Decimal(w_a_f1)}")
-    f.close()
+    # f = io.open("./results/eval" + trace_file[15:], "w")
+    # f.write(f"{'%.4f' % Decimal(accuracy)}\r")
+    # f.write(np.array2string(precision_per_lang, precision=4, separator="  ", floatmode="fixed")[1:-1] + "\r")
+    # f.write(np.array2string(recall_per_lang, precision=4, separator="  ", floatmode="fixed")[1:-1] + "\r")
+    # f.write(np.array2string(f1_per_lang, precision=4, separator="  ", floatmode="fixed")[1:-1] + "\r")
+    # f.write(f"{'%.4f' % Decimal(macro_f1)}  {'%.4f' % Decimal(w_a_f1)}")
+    # f.close()
+
 
 
 def compute_accuracy(confusion_matrix, total):

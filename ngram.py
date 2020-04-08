@@ -83,7 +83,7 @@ class NGram(abc.ABC):
 
         self.evaluate_test_set(test_tweets, unique_chars, self.cond_prob_matrix(training_tweets, unique_chars),
                                lang_probs(training_tweets, len(raw_training_tweets)))
-        evaluate_model(self.OUTPUT_FILE_NAME)
+        return evaluate_model(self.OUTPUT_FILE_NAME)
 
     def generate_output_str(self, probabilities, test_tweet):
         """
