@@ -5,6 +5,7 @@ from trigram import Trigram
 from unigram import Unigram
 from utils import *
 import matplotlib.pyplot as plt
+import pandas as pd
 
 inputs = read('input.txt')[0].strip().split(" ")
 V, N, S_FACTOR, TRAINING_FILE, TEST_FILE = (int(inputs[0]), int(inputs[1]), float(inputs[2]), inputs[3], inputs[4])
@@ -12,11 +13,12 @@ OUTPUT_FILE_NAME = f"./results/trace_{V}_{N}_{S_FACTOR}.txt"
 
 delete_results()
 
-increment_value = 0.1
+increment_value = 0.01
 t1 = time()
 d = increment_value
 x = []
 y = []
+
 while d < 1:
     x.append(d)
     if V == 3:
@@ -39,6 +41,13 @@ while d < 1:
     # print(y)
     d += increment_value
 
+data = {
+    "d": x,
+    "Weighted Average F1": y
+}
+df = pd.DataFrame(data)
+df.to_csv(f'./V{V}_n{N}.csv', index=True, encoding='utf-8')
+
 plt.plot(x, y)
 # naming the x axis
 plt.xlabel('Smoothing Factor')
@@ -46,6 +55,7 @@ plt.xlabel('Smoothing Factor')
 plt.ylabel('Weighted Average F1')
 plt.show()
 t2 = time()
-
+print(x[y.index(max(y))])
 delete_results()
 print(f"execution time: {t2 - t1}s")
+
