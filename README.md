@@ -1,4 +1,4 @@
-# COMP472-Project2
+# Language Identification using N-Gram Models
 https://github.com/bit172/COMP472-Project2
 
 # Instructions
