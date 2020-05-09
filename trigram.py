@@ -5,7 +5,7 @@ from ngram import NGram
 
 
 class Trigram(NGram):
-    def cond_prob_matrix(self, training_tweets, unique_characters):
+    def conditional_prob_matrix(self, training_tweets, unique_characters):
         """
         :param training_tweets: dictionary of training tweets
         :param unique_characters: set of characters in a vocabulary
@@ -16,7 +16,7 @@ class Trigram(NGram):
         for lang, tweets in training_tweets.items():
             for tweet in tweets:
                 for c in self.split_tweet_into_ngrams(tweet, 3):
-                    c1_idx, c2_idx, c3_idx = self.find_c_indices(unique_characters[lang], c)
+                    c1_idx, c2_idx, c3_idx = self.char_index_dictionary(unique_characters[lang], c)
                     frequency_counts[lang][c1_idx, c2_idx, c3_idx] += 1
 
         cond_prob_3d_arrs = self.create_matrices(unique_characters, self.S_FACTOR, 3)
@@ -41,7 +41,7 @@ class Trigram(NGram):
             for lang, c_prob in cond_prob_3d.items():
                 probabilities[lang] = language_probability[lang]
                 for c in self.split_tweet_into_ngrams(tweet, 3):
-                    c1_idx, c2_idx, c3_idx = self.find_c_indices(unique_chars[lang], c)
+                    c1_idx, c2_idx, c3_idx = self.char_index_dictionary(unique_chars[lang], c)
                     probabilities[lang] += c_prob[c1_idx, c2_idx, c3_idx]
             f.write(self.generate_output_str(probabilities, test_tweet))
         f.close()

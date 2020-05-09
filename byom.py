@@ -13,7 +13,7 @@ CHARACTER_SET = {'ü', 'q', 'z', 'h', 'j', 'u', 'c', 'a', 'e', 'ç', 'f', 'n', '
 
 class BYOM(Trigram):
 
-    def total_c_in_v(self):
+    def vocabulary_size(self):
         """
         Total unique characters in new character set
         :return: number of unique characters including whitespace and * delimiter

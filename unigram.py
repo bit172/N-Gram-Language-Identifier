@@ -18,7 +18,7 @@ class Unigram(NGram):
         if self.V == 2:
             return "".join([x for x in tweet if x.isalpha()])
 
-    def total_c(self, categorized_tweets):
+    def nb_of_chars_dictionary(self, categorized_tweets):
         """
         Count the total number of characters found in the tweets per language
         :param categorized_tweets: dictionary of tweets by language
@@ -28,13 +28,13 @@ class Unigram(NGram):
         for language, tweets in categorized_tweets.items():
             count = 0
             for tweet in tweets:
-                for character in tweet:
+                for _ in tweet:
                     count += 1
-            count += self.total_c_in_v() * self.S_FACTOR
+            count += self.vocabulary_size() * self.S_FACTOR
             c_totals[language] = count
         return c_totals
 
-    def count_c_frequencies(self, tweets):
+    def count_char_frequencies(self, tweets):
         """
         Counts the frequency of each characters in an array of tweet strings
         :param tweets: list of tweets
@@ -49,7 +49,7 @@ class Unigram(NGram):
                     bag[c] = 1 + self.S_FACTOR
         return bag
 
-    def c_frequencies_in_langs(self, categorized_tweets):
+    def char_frequencies_dictionary(self, categorized_tweets):
         """
         Count the frequency for each character per language
         :param categorized_tweets: dictionary of tweets by language
@@ -58,17 +58,17 @@ class Unigram(NGram):
         frequencies = {}
         for language, tweets in categorized_tweets.items():
             if language in frequencies.keys():
-                frequencies[language].append(self.count_c_frequencies(tweets))
+                frequencies[language].append(self.count_char_frequencies(tweets))
             else:
-                frequencies[language] = self.count_c_frequencies(tweets)
+                frequencies[language] = self.count_char_frequencies(tweets)
         return frequencies
 
     def categorized_unique_characters(self, training_tweets):
         return None
 
-    def compute_cond_probs(self, frequencies, total_c_counts):
+    def compute_conditional_probs(self, frequencies, total_c_counts):
         """
-        Find conditional probabilities for each c per lang
+        Find conditional probabilities for each character per language
         :param frequencies: dictionary of character frequencies with language key
         :param total_c_counts: dictionary of total number of characters based on language
         :return: dictionary of conditional probabilities with language key
@@ -79,21 +79,21 @@ class Unigram(NGram):
             total = total_c_counts[lang]
             for c, count in frequency.items():
                 bag[c] = math.log10(count / total)
-            if len(bag) < self.total_c_in_v():  # if we don't have all characters in the bag
+            if len(bag) < self.vocabulary_size():  # if we don't have all characters in the bag
                 bag['<NOT-APPEAR>'] = math.log10(self.S_FACTOR / total)
             cond_probs[lang] = bag
 
         return cond_probs
 
-    def cond_prob_matrix(self, training_tweets, unique_chars):
+    def conditional_prob_matrix(self, training_tweets, unique_chars):
         """
         :param training_tweets: dictionary of training tweets
         :param unique_chars: None
         :return: array containing the conditional probabilities of each character
         """
-        total_c_counts = self.total_c(training_tweets)
-        frequencies = self.c_frequencies_in_langs(training_tweets)
-        return self.compute_cond_probs(frequencies, total_c_counts)
+        total_c_counts = self.nb_of_chars_dictionary(training_tweets)
+        frequencies = self.char_frequencies_dictionary(training_tweets)
+        return self.compute_conditional_probs(frequencies, total_c_counts)
 
     def evaluate_test_set(self, test_tweets, unique_chars, cond_prob_matrix, language_probability):
         """

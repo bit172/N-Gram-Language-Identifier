@@ -6,7 +6,7 @@ import math
 
 class Bigram(NGram):
 
-    def cond_prob_matrix(self, training_tweets, unique_characters):
+    def conditional_prob_matrix(self, training_tweets, unique_characters):
         """
         Generates the conditional probability matrix for the bigram model
         :param training_tweets: list of cleaned training tweets
@@ -19,7 +19,7 @@ class Bigram(NGram):
         for lang, tweets in training_tweets.items():
             for tweet in tweets:
                 for c in self.split_tweet_into_ngrams(tweet, 2):
-                    c1_idx, c2_idx = self.find_c_indices(unique_characters[lang], c)
+                    c1_idx, c2_idx = self.char_index_dictionary(unique_characters[lang], c)
                     frequency_counts[lang][c1_idx, c2_idx] += 1
 
         cond_prob_2d_arrs = self.create_matrices(unique_characters, self.S_FACTOR, 2)
@@ -45,7 +45,7 @@ class Bigram(NGram):
             for lang, c_prob in cond_prob_2d.items():
                 probabilities[lang] = language_probabilities[lang]
                 for c in self.split_tweet_into_ngrams(tweet, 2):
-                    c1_idx, c2_idx = self.find_c_indices(unique_characters[lang], c)
+                    c1_idx, c2_idx = self.char_index_dictionary(unique_characters[lang], c)
                     probabilities[lang] += c_prob[c1_idx, c2_idx]
             f.write(self.generate_output_str(probabilities, test_tweet))
         f.close()

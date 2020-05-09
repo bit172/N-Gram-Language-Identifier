@@ -19,7 +19,7 @@ def categorize(tweets):
     return ts_per_lang
 
 
-def total_c_in_isalpha():
+def total_characters_in_isalpha():
     """
     Gives the total number of unicode characters accepted by isalpha()
     Taken from FAQ
@@ -48,7 +48,7 @@ def unique_characters(training_tweets):
     return unique_chars
 
 
-def lang_probs(training_tweets, total_tweet_num):
+def probability_dictionary(training_tweets, total_tweet_num):
     """
     :param training_tweets: dictionary of training tweets
     :param total_tweet_num: the total number of tweets in the training set
@@ -81,8 +81,8 @@ class NGram(abc.ABC):
         raw_test_tweets = read(self.TEST_FILE)
         test_tweets = self.process_tweets(raw_test_tweets)
 
-        self.evaluate_test_set(test_tweets, unique_chars, self.cond_prob_matrix(training_tweets, unique_chars),
-                               lang_probs(training_tweets, len(raw_training_tweets)))
+        self.evaluate_test_set(test_tweets, unique_chars, self.conditional_prob_matrix(training_tweets, unique_chars),
+                               probability_dictionary(training_tweets, len(raw_training_tweets)))
         evaluate_model(self.OUTPUT_FILE_NAME)
 
     def generate_output_str(self, probabilities, test_tweet):
@@ -130,7 +130,7 @@ class NGram(abc.ABC):
         """
         unique_chars = unique_characters(training_tweets)
         for lang, characters in unique_chars.items():
-            if len(characters) < self.total_c_in_v():
+            if len(characters) < self.vocabulary_size():
                 characters.append('<NOT-APPEAR>')
         unique = {}
         for lan, cha in unique_chars.items():
@@ -141,7 +141,7 @@ class NGram(abc.ABC):
                 counter += 1
         return unique
 
-    def total_c_in_v(self):
+    def vocabulary_size(self):
         """
         Returns the total number of characters for a given vocabulary
         :return: number of characters
@@ -151,9 +151,9 @@ class NGram(abc.ABC):
         if self.V == 1:
             return 52
         if self.V == 2:
-            return total_c_in_isalpha()
+            return total_characters_in_isalpha()
 
-    def find_c_indices(self, unique_chars_in_lang, n_grams):
+    def char_index_dictionary(self, unique_chars_in_lang, n_grams):
         """
         :param unique_chars_in_lang: unique characters in a specific language
         :param n_grams: n-gram characters
@@ -201,5 +201,5 @@ class NGram(abc.ABC):
         return
 
     @abc.abstractmethod
-    def cond_prob_matrix(self, training_tweets, unique_chars):
+    def conditional_prob_matrix(self, training_tweets, unique_chars):
         return
